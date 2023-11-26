@@ -1,0 +1,19 @@
+{
+  "port": 8002,
+  "appName": "invoice-service",
+  "appEnv": "development",
+  "signatureKey": "wo_order_key_25062023)$%*$)(*)%*$(%",
+
+  "database": {
+    "host": "host.docker.internal",
+    "port": 5432,
+    "name": "wo_order",
+    "username": "root",
+    "password": "barca1899",
+    "maxOpenConnection": 10,
+    "maxLifetimeConnection": 10,
+    "maxIdleConnection": 10,
+    "maxIdleTime": 10,
+    "autoMigrate": false
+  }
+}
