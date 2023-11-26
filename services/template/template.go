@@ -36,7 +36,8 @@ func (t *TemplateService) StoreTemplate(
 ) (*dto.TemplateResponse, error) {
 	const logCtx = "services.template.template.StoreTemplate"
 	var (
-		span = t.sentry.StartSpan(ctx, logCtx)
+		span     = t.sentry.StartSpan(ctx, logCtx)
+		template *models.Template
 	)
 	ctx = t.sentry.SpanContext(span)
 	defer t.sentry.Finish(span)
@@ -58,7 +59,7 @@ func (t *TemplateService) StoreTemplate(
 			return nil, err
 		}
 
-		template, err := t.repositoryRegistry.GetTemplate().CreateTemplate(ctx, &models.Template{
+		template, err = t.repositoryRegistry.GetTemplate().CreateTemplate(ctx, &models.Template{
 			HTML:      string(htmlContent),
 			Category:  request.Category,
 			Service:   request.Service,
@@ -74,7 +75,7 @@ func (t *TemplateService) StoreTemplate(
 			Service:  template.Service,
 		}
 
-		return &response, nil
+		return response, nil
 	}
 
 	result, err := t.repositoryRegistry.Transaction(ctx, callback)
