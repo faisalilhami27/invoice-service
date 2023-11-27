@@ -27,5 +27,6 @@ func NewTemplateRoute(
 
 func (o *TemplateRoute) Run() {
 	group := o.route.Group("/template")
+	group.GET("", o.controller.GetTemplate().GetTemplate)
 	group.POST("/upload", o.controller.GetTemplate().StoreTemplate)
 }

@@ -37,13 +37,12 @@ func NewDatabaseConnection() (*mongo.Client, error) {
 			Config.Database.Host,
 		)
 	} else {
-		config = fmt.Sprintf("mongodb://%s:%s@%s:%d/%s?authSource=admin&replicaSet=%s",
+		config = fmt.Sprintf("mongodb://%s:%s@%s:%d/%s?authSource=admin&directConnection=true",
 			Config.Database.Username,
 			Config.Database.Password,
 			Config.Database.Host,
 			Config.Database.Port,
 			Config.Database.Name,
-			Config.Database.ReplicaSet,
 		)
 	}
 

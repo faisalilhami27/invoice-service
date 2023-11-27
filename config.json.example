@@ -1,19 +1,37 @@
 {
-  "port": 8002,
+  "port": 8006,
   "appName": "invoice-service",
-  "appEnv": "development",
-  "signatureKey": "wo_order_key_25062023)$%*$)(*)%*$(%",
+  "appEnv": "local",
+  "appDebug": true,
+  "signatureKey": "",
 
   "database": {
-    "host": "host.docker.internal",
-    "port": 5432,
-    "name": "wo_order",
-    "username": "root",
-    "password": "barca1899",
-    "maxOpenConnection": 10,
-    "maxLifetimeConnection": 10,
-    "maxIdleConnection": 10,
-    "maxIdleTime": 10,
-    "autoMigrate": false
-  }
+    "host": "localhost",
+    "port": 27017,
+    "name": "wo_invoice",
+    "username": "",
+    "password": "",
+    "timeout": 5
+  },
+
+  "rateLimiterMaxRequest": 5,
+  "rateLimiterTimeSecond": 5,
+
+  "sentryDsn": "",
+  "sentrySampleRate": 0.2,
+  "sentryEnableTracing": true,
+
+  "gcsType": "service_account",
+  "gcsProjectID": "mumtaz-wedding-organizer",
+  "gcsPrivateKeyID": "05cda5e52c71f0fdf843fd4a5904bd0432a81c52",
+  "gcsPrivateKey": "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRQ09MYmovcHZ6MjIwdysKaE5FZ3A1RldEM21EVjV1RkpqTjBwVzVXRVU4K1dDWVY1TTFOczMwZjVJQTZnNG5sakRkdm1nRGdHMHpsNUNGUQpHSEV1WnZwQStKczFSWXI0K0VJNVU5Z01PRzF4UnpCT0pJY1pEVEVHUjQ1dmhTWk5JbkVjbGNCaTAreTVWQktICkgrK0pnNHk0dzROemNWNzdhN1VkNFdDbEJwYXJSZk5Ua2hBZWhjVFBoeGVmUWlxNzBnclBZWlpaT3lKN3pMcTcKTmFBK0NtL1dpZGdkZUZmREJwcHJHdHMvWld5c2xCNE0xSWdWVzhCWFZHTy9UMURCbVBORkc3R3JJMk55MlBocQpWOW5rendGdDFZdmlXQ1ZzcEhGcFBMbmZXeEZFdWx6U3JkYjJFaEh0dWhlMkJsUnZKcmtXNzhNSmNrQlpwbEtNCnU2YS85M1ViQWdNQkFBRUNnZ0VBQmVxeWg0dkVKem5GR0lKS2VhNFUzRWRVbFRvR0hOVVVKY2M1LzVidmZLRmYKendyRjNjcVp3RzZ2NzJvZDg2Ym0xUWJNVm9jMi9MSXhEZ3VXV2pTcTRYS2h5RHZCVVhuSXQ3NEhnRlZiZmUvLwowS0N3aHBoZFJwZWZ2b0JhQndlOGtWQ2lGYVYxZFM1TWZ4Y1RKRFBoOHFaMW5VNUYxNklKMkM1OWs4czNFS0E1ClgxZWcrMjJ3RDJkQnYvemFXQXA2eHZ1T1pWV3Z2VGIrL2IyVlVJWlRnNHFkRUQwNTJ6OUFWTjJwTU96UFpNNzkKd0MwN3NlQkpyN3BLK29vSkU5VkZ2b3kzMGIvbXZFSmcwOFpXSlFnbWNVZFJZNXl4RmdlYXRSL0VEVFZxUFZnTQo5VUc0VytUZllBL0FVMU5Id3JCNmpMaUwwdVlqTlBVVm14b1BwdzB1VVFLQmdRREgxYWxYYkQ3cGZhaEdDdUd3CmlGTDRZN3puSUY1THBlMzNIa2U1QTExemxjL2FPN0dHbDkzVXNxNEovZU9VS20wZnNvSzk1cEcvV1UrTHp2QjgKY0VsYUNDcmFCS1ZENnJ0NGNrOWxmY1ZqdmhtMXRaMFBFK292cjdtR3BnVTdMWGRJK095eVZMc2JGelUvaERBbQpxOGY3ME41UFUzRGRkN3NEVCtQeXRVRnZYUUtCZ1FDMkk2UjdsYzNoeWJTb3ViMnZYcWpMMG56UnJqK0w2Tk1MCkFZK1FiUFZSN3ExTFpZa0xrZzVYa3pGZFR6WVpMNFB0K1N2Ulptdk9EYm8vck5GaFVJYjByY2tDV0p4OVlaYTcKeHcwMzAwUmNxUitGVFNOR0psbng3eGlWc0xmeC9jUWs3N2U2NlkvNk1TWWhUdGkwZmpOaC9NQTlRazRvVlZoagp6czFPc0ZYRzF3S0JnR2ZqalVrVXpsUW03bytUWXFlYkI3OTRZcUdwOHp2U3hMYi9OL3hZWW9JUHRXSllQRCtqCnZrQ3dyOGdrQk9kbmN4blNmU1BxdFlUTUVvMjFoTks4c1hXcjMxTStyUWgxQlFkbUxoNnVWeXMyamprb2RNRjgKOGZmZW5FNERDNThyVU9OUC9nWHNCT1hkbCtJd2Y3UHJCR25HdVh4MS9hdzFiYlVZR0lKNmRzMUZBb0dBVEY1LwpmZzRlNkRnaDFza2lucUNMR0FNbXNPaGwzcXo5cUZTOE5HdHJKVEoxV1BLMjFySWo3MVpaVVcyQUdtbFE0UHdrCkFrWDJsOHdydHIwb2dhdzVHZWl3S3BxcTZ1dDdQenJEOFE5VlQ2RGVCWStGWmNsNDF6ZFFVSnRyVlR6NC9CL0QKSXMwQndIN1JKUkFoVHZUSGFLT0ltMmJzekg2VWRDem02c0tIQkxzQ2dZRUFyMHpBTFpRRFh6SVppQ01vSHdBUApVRGlUKzZhT0s0aWNmMmFRQmMydDJhMldmR3hBUlhEUDhxWVdDc2wzQU5mbE9BTnR4azYrMUdzaVRLUnBnNTFpCjM3TS9oTTlJbEZudG1GcWFkNEVubit3TkNlOGdWMm1IL1VrQ0tBc29RTlQvY1ZEbUZyYWVCb2ZTdVRoeUNGc2kKUkh4VDArM1FTKzRMWlN1OUNaVE1PRVk9Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0=",
+  "gcsClientEmail": "mumtaz-wedding-organizer@mumtaz-wedding-organizer.iam.gserviceaccount.com",
+  "gcsClientID": "110539935829159068615",
+  "gcsAuthURI": "https://accounts.google.com/o/oauth2/auth",
+  "gcsTokenURI": "https://oauth2.googleapis.com/token",
+  "gcsAuthProviderX509CertURL": "https://www.googleapis.com/oauth2/v1/certs",
+  "gcsClientX509CertURL": "https://www.googleapis.com/robot/v1/metadata/x509/mumtaz-wedding-organizer%40mumtaz-wedding-organizer.iam.gserviceaccount.com",
+  "gcsBucketName": "invoice_service",
+  "gcsSignedURLTimeInMinutes": 2880,
+  "gcsTimeOut": 5
 }

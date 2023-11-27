@@ -1,13 +1,13 @@
 version: '3.9'
 
 services:
-  order-app:
-    container_name: order-app
+  invoice-app:
+    container_name: invoice-app
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8002:8002"
+      - "8006:8006"
     environment:
       CONSUL_HTTP_URL: ${CONSUL_HTTP_URL}
       CONSUL_HTTP_KEY: ${CONSUL_HTTP_KEY}

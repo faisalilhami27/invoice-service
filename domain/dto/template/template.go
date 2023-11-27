@@ -12,6 +12,11 @@ type TemplateRequest struct {
 	UpdatedBy string                `form:"updatedBy"`
 }
 
+type TemplateQueryParamRequest struct {
+	Category string `form:"category"`
+	Service  string `form:"service"`
+}
+
 type TemplateResponse struct {
 	UUID     string `json:"uuid"`
 	Category string `json:"category"`

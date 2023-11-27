@@ -2,6 +2,9 @@ package services
 
 import (
 	"context"
+	"strings"
+
+	errTemplate "invoice-service/constant/error/template"
 
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -21,6 +24,7 @@ type TemplateService struct {
 
 type ITemplateService interface {
 	StoreTemplate(ctx context.Context, request *dto.TemplateRequest) (*dto.TemplateResponse, error)
+	GetTemplate(ctx context.Context, request *dto.TemplateQueryParamRequest) ([]dto.TemplateResponse, error)
 }
 
 func NewTemplateService(repositoryRegistry repositories.IRepositoryRegistry, sentry sentry.ISentry) ITemplateService {
@@ -28,6 +32,35 @@ func NewTemplateService(repositoryRegistry repositories.IRepositoryRegistry, sen
 		repositoryRegistry: repositoryRegistry,
 		sentry:             sentry,
 	}
+}
+
+func (t *TemplateService) GetTemplate(
+	ctx context.Context,
+	request *dto.TemplateQueryParamRequest,
+) ([]dto.TemplateResponse, error) {
+	const logCtx = "services.template.template.GetTemplate"
+	var (
+		span      = t.sentry.StartSpan(ctx, logCtx)
+		templates []models.Template
+	)
+	ctx = t.sentry.SpanContext(span)
+	defer t.sentry.Finish(span)
+
+	templates, err := t.repositoryRegistry.GetTemplate().FindAllByCategoryOrService(ctx, request.Category, request.Service)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]dto.TemplateResponse, 0, len(templates))
+	for _, template := range templates {
+		response = append(response, dto.TemplateResponse{
+			UUID:     template.UUID,
+			Category: template.Category,
+			Service:  template.Service,
+		})
+	}
+
+	return response, nil
 }
 
 func (t *TemplateService) StoreTemplate(
@@ -43,6 +76,20 @@ func (t *TemplateService) StoreTemplate(
 	defer t.sentry.Finish(span)
 
 	callback := func(ctx mongo.SessionContext) (any, error) {
+		checkTemplate, err := t.repositoryRegistry.GetTemplate().
+			FindOneByCategoryAndService(
+				ctx,
+				request.Category,
+				request.Service,
+			)
+		if err != nil {
+			return nil, err
+		}
+
+		if checkTemplate != nil {
+			return nil, errTemplate.ErrTemplateAlreadyExist
+		}
+
 		file, err := request.HTML.Open()
 		if err != nil {
 			return nil, err
@@ -61,8 +108,8 @@ func (t *TemplateService) StoreTemplate(
 
 		template, err = t.repositoryRegistry.GetTemplate().CreateTemplate(ctx, &models.Template{
 			HTML:      string(htmlContent),
-			Category:  request.Category,
-			Service:   request.Service,
+			Category:  strings.ToLower(request.Category),
+			Service:   strings.ToLower(request.Service),
 			CreatedBy: &request.CreatedBy,
 		})
 		if err != nil {

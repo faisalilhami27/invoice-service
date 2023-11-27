@@ -34,7 +34,14 @@ func NewInvoice(db *mongo.Client, sentry sentry.ISentry) IInvoice {
 	}
 }
 
-func (t *Invoice) CreateInvoice(ctx context.Context, invoice *models.Invoice) (*models.Invoice, error) {
+func (i *Invoice) CreateInvoice(ctx context.Context, invoice *models.Invoice) (*models.Invoice, error) {
+	const logCtx = "repositories.invoice.invoice.CreateInvoice"
+	var (
+		span = i.sentry.StartSpan(ctx, logCtx)
+	)
+	ctx = i.sentry.SpanContext(span)
+	defer i.sentry.Finish(span)
+
 	utcTime := time.Now().UTC()
 	jakartaLocation, _ := time.LoadLocation("Asia/Jakarta") //nolint:errcheck
 	today := utcTime.In(jakartaLocation).Format(time.RFC3339)
@@ -42,15 +49,15 @@ func (t *Invoice) CreateInvoice(ctx context.Context, invoice *models.Invoice) (*
 	invoice.UUID = uuidGenerate.New().String()
 	invoice.CreatedAt = parseTime
 	invoice.UpdatedAt = &parseTime
-	collection := t.db.Database(config.Config.Database.Name).Collection("invoices")
+	collection := i.db.Database(config.Config.Database.Name).Collection("invoices")
 	result, err := collection.InsertOne(ctx, invoice)
 	if err != nil {
-		return nil, errorHelper.WrapError(err, t.sentry)
+		return nil, errorHelper.WrapError(err, i.sentry)
 	}
 
 	insertedID, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
-		return nil, errorHelper.WrapError(err, t.sentry)
+		return nil, errorHelper.WrapError(err, i.sentry)
 	}
 
 	response := models.Invoice{

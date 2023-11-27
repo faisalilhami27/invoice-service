@@ -38,13 +38,12 @@ type AppConfig struct {
 }
 
 type Database struct {
-	Host       string `json:"host" yaml:"host"`
-	Port       int    `json:"port" yaml:"port"`
-	Name       string `json:"name" yaml:"name"`
-	Username   string `json:"username" yaml:"username"`
-	Password   string `json:"password" yaml:"password"`
-	Timeout    int    `json:"timeout" yaml:"timeout"`
-	ReplicaSet string `json:"replicaSet" yaml:"replicaSet"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	Name     string `json:"name" yaml:"name"`
+	Username string `json:"username" yaml:"username"`
+	Password string `json:"password" yaml:"password"`
+	Timeout  int    `json:"timeout" yaml:"timeout"`
 }
 
 func Init() {

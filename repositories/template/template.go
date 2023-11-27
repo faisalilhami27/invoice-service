@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"errors"
 
 	uuidGenerate "github.com/google/uuid"
 
@@ -27,6 +28,8 @@ type Template struct {
 type ITemplate interface {
 	CreateTemplate(ctx context.Context, template *models.Template) (*models.Template, error)
 	FindOneByUUID(ctx context.Context, uuid uuidGenerate.UUID) (*models.Template, error)
+	FindAllByCategoryOrService(ctx context.Context, category, service string) ([]models.Template, error)
+	FindOneByCategoryAndService(ctx context.Context, category, service string) (*models.Template, error)
 }
 
 func NewTemplate(db *mongo.Client, sentry sentry.ISentry) ITemplate {
@@ -88,4 +91,67 @@ func (t *Template) FindOneByUUID(ctx context.Context, uuid uuidGenerate.UUID) (*
 		return nil, errorHelper.WrapError(err, t.sentry)
 	}
 	return &template, nil
+}
+
+func (t *Template) FindAllByCategoryOrService(
+	ctx context.Context,
+	category, service string,
+) ([]models.Template, error) {
+	const logCtx = "repositories.template.template.FindAllByCategoryOrService"
+	var (
+		span = t.sentry.StartSpan(ctx, logCtx)
+	)
+	ctx = t.sentry.SpanContext(span)
+	defer t.sentry.Finish(span)
+
+	filter := bson.M{}
+	if category != "" || service != "" {
+		filter = bson.M{
+			"$or": []bson.M{
+				{"category": category},
+				{"service": service},
+			},
+		}
+	}
+
+	collection := t.db.Database(config.Config.Database.Name).Collection("templates")
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, errorHelper.WrapError(err, t.sentry)
+	}
+
+	var result []models.Template
+	if err = cursor.All(ctx, &result); err != nil {
+		return nil, errorHelper.WrapError(err, t.sentry)
+	}
+
+	return result, nil
+}
+
+func (t *Template) FindOneByCategoryAndService(
+	ctx context.Context,
+	category, service string,
+) (*models.Template, error) {
+	const logCtx = "repositories.template.template.FindOneByCategoryAndService"
+	var (
+		span = t.sentry.StartSpan(ctx, logCtx)
+	)
+	ctx = t.sentry.SpanContext(span)
+	defer t.sentry.Finish(span)
+
+	var result models.Template
+	filter := bson.D{
+		{"category", category}, //nolint:govet
+		{"invoice", service},   //nolint:govet
+	}
+	collection := t.db.Database(config.Config.Database.Name).Collection("templates")
+	err := collection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, errorHelper.WrapError(err, t.sentry)
+	}
+
+	return &result, nil
 }

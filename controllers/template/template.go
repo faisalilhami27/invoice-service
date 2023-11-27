@@ -21,6 +21,7 @@ type TemplateController struct {
 
 type ITemplateController interface {
 	StoreTemplate(*gin.Context)
+	GetTemplate(*gin.Context)
 }
 
 func NewTemplateController(
@@ -31,6 +32,46 @@ func NewTemplateController(
 		serviceRegistry: serviceRegistry,
 		sentry:          sentry,
 	}
+}
+
+func (t *TemplateController) GetTemplate(c *gin.Context) {
+	const logCtx = "controllers.http.template.template.GetTemplate"
+	var (
+		ctx     = c.Request.Context()
+		span    = t.sentry.StartSpan(ctx, logCtx)
+		request dto.TemplateQueryParamRequest
+	)
+	ctx = t.sentry.SpanContext(span)
+	defer t.sentry.Finish(span)
+
+	err := c.ShouldBindQuery(&request)
+	if err != nil {
+		response.HTTPResponse(response.ParamHTTPResp{
+			Code:   http.StatusBadRequest,
+			Err:    err,
+			Gin:    c,
+			Sentry: t.sentry,
+		})
+		return
+	}
+
+	result, err := t.serviceRegistry.GetTemplate().GetTemplate(ctx, &request)
+	if err != nil {
+		response.HTTPResponse(response.ParamHTTPResp{
+			Code:   http.StatusBadRequest,
+			Err:    err,
+			Gin:    c,
+			Sentry: t.sentry,
+		})
+		return
+	}
+
+	response.HTTPResponse(response.ParamHTTPResp{
+		Code: http.StatusOK,
+		Data: result,
+		Err:  err,
+		Gin:  c,
+	})
 }
 
 func (t *TemplateController) StoreTemplate(c *gin.Context) {
