@@ -1,7 +1,7 @@
 FROM golang:1.21.3-alpine3.18 as builder
 
-RUN apk update
-RUN apk add git openssh tzdata build-base python3 net-tools
+RUN apk update && \
+    apk add --no-cache git openssh tzdata build-base python3 net-tools
 
 WORKDIR /app
 
@@ -15,10 +15,14 @@ RUN make build
 
 FROM alpine:latest
 
-RUN apk update && apk upgrade && \
+RUN apk update && \
+    apk upgrade && \
     apk --update --no-cache add tzdata && \
     apk --no-cache add curl && \
-    mkdir /app
+    apk --no-cache add chromium
+
+ENV TZ=Asia/Jakarta
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /app
 

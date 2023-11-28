@@ -54,13 +54,14 @@ func (t *InvoiceService) StoreInvoice(
 		invoice, txErr := t.repositoryRegistry.GetInvoice().CreateInvoice(ctx, &models.Invoice{
 			InvoiceNumber: request.InvoiceNumber,
 			Data:          request.Data,
+			CreatedBy:     &request.CreatedBy,
 		})
 		if txErr != nil {
 			return nil, txErr
 		}
 
 		var data map[string]interface{}
-		jsonData, _ := json.Marshal(request.Data) //nolint:errcheck
+		jsonData, _ := json.Marshal(request) //nolint:errcheck
 		txErr = json.Unmarshal(jsonData, &data)
 		if txErr != nil {
 			return nil, txErr

@@ -48,7 +48,6 @@ func (i *Invoice) CreateInvoice(ctx context.Context, invoice *models.Invoice) (*
 	parseTime, _ := time.Parse(time.RFC3339, today)
 	invoice.UUID = uuidGenerate.New().String()
 	invoice.CreatedAt = parseTime
-	invoice.UpdatedAt = &parseTime
 	collection := i.db.Database(config.Config.Database.Name).Collection("invoices")
 	result, err := collection.InsertOne(ctx, invoice)
 	if err != nil {

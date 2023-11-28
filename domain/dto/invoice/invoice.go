@@ -5,9 +5,10 @@ import (
 )
 
 type InvoiceRequest struct {
-	InvoiceNumber string    `json:"invoiceNumber"`
+	InvoiceNumber string    `json:"invoice_number"`
 	Data          any       `json:"data"`
-	TemplateID    uuid.UUID `json:"templateID"`
+	TemplateID    uuid.UUID `json:"template_id"`
+	CreatedBy     string    `json:"created_by"`
 }
 
 type InvoiceResponse struct {
