@@ -73,6 +73,19 @@ var restCmd = &cobra.Command{
 			},
 		)
 		router.Use(middlewares.RateLimiter(lmt))
+		router.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, response.Response{
+				Status:  "success",
+				Message: "Welcome to Invoice Service",
+			})
+		})
+		router.Use(middlewares.ValidateAPIKey())
+		router.Use(func(c *gin.Context) {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH")
+			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			c.Next()
+		})
 		group := router.Group("/api/v1")
 		route := routeRegistry.NewRouteRegistry(controller, group)
 		route.Serve()
