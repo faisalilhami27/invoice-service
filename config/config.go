@@ -17,6 +17,7 @@ type AppConfig struct {
 	AppEnv                     string   `json:"appEnv" yaml:"appEnv"`
 	AppDebug                   bool     `json:"appDebug" yaml:"appDebug"`
 	SignatureKey               string   `json:"signatureKey" yaml:"signatureKey"`
+	StaticKey                  string   `json:"staticKey" yaml:"staticKey"`
 	Database                   Database `json:"database" yaml:"database"`
 	SentryDsn                  string   `json:"sentryDsn" yaml:"sentryDsn"`
 	SentrySampleRate           float64  `json:"sentrySampleRate" yaml:"sentrySampleRate"`

@@ -3,6 +3,8 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
+	"invoice-service/middlewares"
+
 	"invoice-service/controllers"
 )
 
@@ -27,5 +29,5 @@ func NewInvoiceRoute(
 
 func (o *InvoiceRoute) Run() {
 	group := o.route.Group("/invoice")
-	group.POST("/generate", o.controller.GetInvoice().StoreInvoice)
+	group.POST("/generate", middlewares.StaticAPIKey(), o.controller.GetInvoice().StoreInvoice)
 }

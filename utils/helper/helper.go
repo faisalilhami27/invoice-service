@@ -194,3 +194,12 @@ func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, er
 
 	return pdf, nil
 }
+
+func InArray(needle interface{}, haystack []any) bool {
+	for _, item := range haystack {
+		if item == needle {
+			return true
+		}
+	}
+	return false
+}

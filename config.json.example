@@ -4,6 +4,7 @@
   "appEnv": "local",
   "appDebug": true,
   "signatureKey": "",
+  "staticKey": "",
 
   "database": {
     "host": "localhost",

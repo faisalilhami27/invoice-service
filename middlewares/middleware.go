@@ -40,7 +40,34 @@ func ValidateAPIKey() gin.HandlerFunc {
 		validateAPIKey := fmt.Sprintf("%s:%s:%s", serviceName, signatureKey, requestAt)
 		apiKeyHash := helper.GenerateSHA256(validateAPIKey)
 
+		excludePath := []interface{}{
+			"/api/v1/invoice/generate",
+		}
+
+		if helper.InArray(c.Request.URL.Path, excludePath) {
+			c.Next()
+			return
+		}
+
 		if apiKey != apiKeyHash {
+			newError := fmt.Sprintf("Unauthorized") //nolint:gosimple
+			c.JSON(http.StatusUnauthorized, response.Response{
+				Status:  constantError.Error,
+				Message: newError,
+			})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+func StaticAPIKey() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		staticKey := config.Config.StaticKey
+		apiKey := c.GetHeader(constant.XApiKey)
+
+		if staticKey == "" || staticKey != apiKey {
 			newError := fmt.Sprintf("Unauthorized") //nolint:gosimple
 			c.JSON(http.StatusUnauthorized, response.Response{
 				Status:  constantError.Error,
