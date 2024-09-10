@@ -6,11 +6,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"github.com/chromedp/cdproto/page"
-	"github.com/chromedp/chromedp"
-
 	"html/template"
 
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -135,7 +134,7 @@ func SetEnvFromConsulKV(v *viper.Viper) error {
 		case reflect.Int:
 			val = strconv.Itoa(int(valOf.Int()))
 		case reflect.Uint:
-			val = strconv.Itoa(int(valOf.Uint()))
+			val = strconv.Itoa(int(valOf.Uint())) //nolint:gosec
 		case reflect.Float64:
 			val = strconv.Itoa(int(valOf.Float()))
 		case reflect.Float32:
@@ -161,6 +160,10 @@ func GenerateSHA256(inputString string) string {
 	return hashString
 }
 
+func add1(x int) int {
+	return x + 1
+}
+
 func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, error) {
 	contextPDF, cancel := chromedp.NewContext(
 		ctx,
@@ -168,7 +171,11 @@ func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, er
 	)
 	defer cancel()
 
-	tmpl, err := template.New("htmlTemplate").Parse(htmlTemplate)
+	funcMap := template.FuncMap{
+		"add1": add1,
+	}
+
+	tmpl, err := template.New("htmlTemplate").Funcs(funcMap).Parse(htmlTemplate)
 	if err != nil {
 		return nil, err
 	}

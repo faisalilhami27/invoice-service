@@ -29,7 +29,7 @@ import (
 var restCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Command to start http server",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, args []string) { //nolint:revive
 		_ = godotenv.Load() //nolint:errcheck
 		config.Init()
 		db, err := config.NewDatabaseConnection()
@@ -116,6 +116,7 @@ func initGCS() *gcs.GCSPackage {
 		TokenUri:                config.Config.GCSTokenURI,
 		AuthProviderX509CertUrl: config.Config.GCSAuthProviderX509CertURL,
 		ClientX509CertUrl:       config.Config.GCSClientX509CertURL,
+		UniverseDomain:          config.Config.GCSUniverseDomain,
 	}
 	gcsClient := gcs.NewGCSClient(
 		gcs.WithServiceAccountKeyJSON(gcsServiceAccount),

@@ -41,6 +41,7 @@ type ServiceAccountKeyJSON struct {
 	TokenUri                string `json:"token_uri"`                   //nolint:revive,stylecheck
 	AuthProviderX509CertUrl string `json:"auth_provider_x509_cert_url"` //nolint:revive,stylecheck
 	ClientX509CertUrl       string `json:"client_x509_cert_url"`        //nolint:revive,stylecheck
+	UniverseDomain          string `json:"universe_domain"`             //nolint:revive,stylecheck
 }
 
 type UploadOptions struct {
@@ -133,7 +134,7 @@ func (c *GCSPackage) GetSignedURL(ctx context.Context, object string, timeout ti
 		GoogleAccessID: c.ServiceAccountKeyJSON.ClientEmail,
 		PrivateKey:     []byte(c.ServiceAccountKeyJSON.PrivateKey),
 		Method:         "GET",
-		Expires:        time.Now().Add(time.Duration(c.SignedURLTimeInMinutes) * time.Minute),
+		Expires:        time.Now().Add(time.Duration(c.SignedURLTimeInMinutes) * time.Minute), //nolint:gosec
 	})
 	if err != nil {
 		log.Errorf("an error occurred when get signed url : %v", err)
@@ -229,7 +230,7 @@ func (c *GCSPackage) UploadFileInByte(ctx context.Context, fileName string, data
 		timeoutInSeconds = 30
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeoutInSeconds)*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeoutInSeconds)*time.Second) //nolint:gosec
 	defer cancel()
 
 	buc := c.Client.Bucket(c.BucketName)
@@ -257,7 +258,7 @@ func (c *GCSPackage) UploadFileInByte(ctx context.Context, fileName string, data
 		GoogleAccessID: c.ServiceAccountKeyJSON.ClientEmail,
 		PrivateKey:     []byte(c.ServiceAccountKeyJSON.PrivateKey),
 		Method:         "GET",
-		Expires:        time.Now().Add(time.Duration(c.SignedURLTimeInMinutes) * time.Minute),
+		Expires:        time.Now().Add(time.Duration(c.SignedURLTimeInMinutes) * time.Minute), //nolint:gosec
 	})
 
 	if err != nil {

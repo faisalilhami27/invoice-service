@@ -35,6 +35,7 @@ type AppConfig struct {
 	GCSAuthProviderX509CertURL string   `json:"gcsAuthProviderX509CertURL" yaml:"gcsAuthProviderX509CertURL"`
 	GCSClientX509CertURL       string   `json:"gcsClientX509CertURL" yaml:"gcsClientX509CertURL"`
 	GCSBucketName              string   `json:"gcsBucketName" yaml:"gcsBucketName"`
+	GCSUniverseDomain          string   `json:"gcsUniverseDomain" yaml:"gcsUniverseDomain"`
 	GCSSignedURLTimeInMinutes  uint     `json:"gcsSignedURLTimeInMinutes" yaml:"gcsSignedURLTimeInMinutes"`
 }
 

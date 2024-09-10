@@ -1,4 +1,4 @@
-FROM golang:1.21.3-alpine3.18 as builder
+FROM golang:1.22.7-alpine3.20 as builder
 
 RUN apk update && \
     apk add --no-cache git openssh tzdata build-base python3 net-tools
@@ -26,7 +26,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /app
 
-EXPOSE 8002
+EXPOSE 8012
 
 COPY --from=builder /app /app
 

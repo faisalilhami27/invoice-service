@@ -45,7 +45,7 @@ func (i *Invoice) CreateInvoice(ctx context.Context, invoice *models.Invoice) (*
 	utcTime := time.Now().UTC()
 	jakartaLocation, _ := time.LoadLocation("Asia/Jakarta") //nolint:errcheck
 	today := utcTime.In(jakartaLocation).Format(time.RFC3339)
-	parseTime, _ := time.Parse(time.RFC3339, today)
+	parseTime, _ := time.Parse(time.RFC3339, today) //nolint:errcheck
 	invoice.UUID = uuidGenerate.New().String()
 	invoice.CreatedAt = parseTime
 	collection := i.db.Database(config.Config.Database.Name).Collection("invoices")

@@ -50,7 +50,7 @@ func (t *Template) CreateTemplate(ctx context.Context, template *models.Template
 	utcTime := time.Now().UTC()
 	jakartaLocation, _ := time.LoadLocation("Asia/Jakarta") //nolint:errcheck
 	today := utcTime.In(jakartaLocation).Format(time.RFC3339)
-	parseTime, _ := time.Parse(time.RFC3339, today)
+	parseTime, _ := time.Parse(time.RFC3339, today) //nolint:errcheck
 	template.UUID = uuidGenerate.New().String()
 	template.CreatedAt = parseTime
 	template.UpdatedAt = &parseTime
