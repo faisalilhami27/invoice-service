@@ -52,6 +52,7 @@ var restCmd = &cobra.Command{
 			sentry.WithEnableTracing(config.Config.SentryEnableTracing),
 		)
 
+		// GCS for file storage
 		gcs := initGCS()
 
 		repository := repositoryRegistry.NewRepositoryRegistry(db, sentry)
