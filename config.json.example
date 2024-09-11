@@ -9,7 +9,7 @@
   "database": {
     "host": "localhost",
     "port": 27017,
-    "name": "wo_invoice",
+    "name": "invoice_service",
     "username": "",
     "password": "",
     "timeout": 5
