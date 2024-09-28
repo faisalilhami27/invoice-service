@@ -163,6 +163,7 @@ func add1(x int) int {
 	return x + 1
 }
 
+//nolint:gocritic
 //func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, error) {
 //	contextPDF, cancel := chromedp.NewContext(
 //		ctx,
