@@ -1,5 +1,4 @@
-version: '3.9'
-
+name: wedding-app
 services:
   invoice-app:
     container_name: invoice-app
@@ -7,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8006:8006"
+      - "8006:8012"
     environment:
       CONSUL_HTTP_URL: ${CONSUL_HTTP_URL}
       CONSUL_HTTP_KEY: ${CONSUL_HTTP_KEY}

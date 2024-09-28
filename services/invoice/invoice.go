@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"invoice-service/domain/models"
+	"invoice-service/utils/helper"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,9 +13,7 @@ import (
 	"invoice-service/common/gcs"
 	"invoice-service/common/sentry"
 	dto "invoice-service/domain/dto/invoice"
-	"invoice-service/domain/models"
 	"invoice-service/repositories"
-	"invoice-service/utils/helper"
 )
 
 type InvoiceService struct {
@@ -72,14 +72,14 @@ func (t *InvoiceService) StoreInvoice(
 			return nil, txErr
 		}
 
-		generatePDF, txErr := helper.GeneratePDF(ctx, templateResult.HTML, data)
+		pdf, txErr := helper.GeneratePDFFromHTML(templateResult.HTML, data)
 		if txErr != nil {
 			return nil, txErr
 		}
 
 		invoiceNumber := strings.ToLower(strings.ReplaceAll(request.InvoiceNumber, "/", "-"))
 		filename := fmt.Sprintf("%s.pdf", invoiceNumber)
-		url, txErr = t.gcs.UploadFileInByte(ctx, filename, generatePDF)
+		url, txErr = t.gcs.UploadFileInByte(ctx, filename, pdf)
 		if txErr != nil {
 			return nil, txErr
 		}

@@ -2,14 +2,13 @@ package helper
 
 import (
 	"bytes"
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
 
 	"html/template"
 
-	"github.com/chromedp/cdproto/page"
-	"github.com/chromedp/chromedp"
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -164,13 +163,45 @@ func add1(x int) int {
 	return x + 1
 }
 
-func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, error) {
-	contextPDF, cancel := chromedp.NewContext(
-		ctx,
-		chromedp.WithLogf(log.Printf),
-	)
-	defer cancel()
+//func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, error) {
+//	contextPDF, cancel := chromedp.NewContext(
+//		ctx,
+//		chromedp.WithLogf(log.Printf),
+//	)
+//	defer cancel()
+//
+//	funcMap := template.FuncMap{
+//		"add1": add1,
+//	}
+//
+//	tmpl, err := template.New("htmlTemplate").Funcs(funcMap).Parse(htmlTemplate)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	var filledTemplate bytes.Buffer
+//	if err = tmpl.Execute(&filledTemplate, data); err != nil {
+//		return nil, err
+//	}
+//
+//	htmlContent := filledTemplate.String()
+//
+//	// Convert HTML to PDF
+//	var pdf []byte
+//	if err = chromedp.Run(contextPDF,
+//		chromedp.Navigate("data:text/html,"+htmlContent),
+//		chromedp.ActionFunc(func(ctx context.Context) error {
+//			pdf, _, err = page.PrintToPDF().Do(ctx)
+//			return err
+//		}),
+//	); err != nil {
+//		return nil, err
+//	}
+//
+//	return pdf, nil
+//}
 
+func GeneratePDFFromHTML(htmlTemplate string, data any) ([]byte, error) {
 	funcMap := template.FuncMap{
 		"add1": add1,
 	}
@@ -187,19 +218,27 @@ func GeneratePDF(ctx context.Context, htmlTemplate string, data any) ([]byte, er
 
 	htmlContent := filledTemplate.String()
 
-	// Convert HTML to PDF
-	var pdf []byte
-	if err = chromedp.Run(contextPDF,
-		chromedp.Navigate("data:text/html,"+htmlContent),
-		chromedp.ActionFunc(func(ctx context.Context) error {
-			pdf, _, err = page.PrintToPDF().Do(ctx)
-			return err
-		}),
-	); err != nil {
+	pdfGen, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Errorf("failed to create pdf generator: %+v\n", err)
 		return nil, err
 	}
 
-	return pdf, nil
+	pdfGen.Dpi.Set(600)
+	pdfGen.NoCollate.Set(false)
+	pdfGen.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfGen.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfGen.Grayscale.Set(false)
+	pdfGen.AddPage(wkhtmltopdf.NewPageReader(strings.NewReader(htmlContent)))
+
+	// Create PDF document in internal buffer
+	err = pdfGen.Create()
+	if err != nil {
+		log.Errorf("failed to create pdf: %+v\n", err)
+		return nil, err
+	}
+
+	return pdfGen.Bytes(), nil
 }
 
 func InArray(needle interface{}, haystack []any) bool {
